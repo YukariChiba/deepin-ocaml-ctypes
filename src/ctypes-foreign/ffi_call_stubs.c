@@ -370,13 +370,13 @@ value ctypes_call(value fnname, value function, value callspec_,
   callback_val_arr = caml_alloc_tuple(nelements);
   caml_callback2(argwriter, callback_arg_buf, callback_val_arr);
 
-  void **val_refs = alloca(sizeof(void*) * nelements);
+  const void **val_refs = alloca(sizeof(void*) * nelements);
 
   unsigned arg_idx;
   for(arg_idx = 0; arg_idx < Wosize_val(callback_val_arr); arg_idx++) {
     value arg_tuple = Field(callback_val_arr, arg_idx);
-    /* <4.02 initialize to 0; >=4.02 initialize to unit. */
-    if(arg_tuple == 0 || arg_tuple == Val_unit) continue;
+    /* >=4.02 initialize to unit. */
+    if(arg_tuple == Val_unit) continue;
 
     value arg_ptr    = Field(arg_tuple, 0);
     value arg_offset = Field(arg_tuple, 1);
@@ -385,7 +385,7 @@ value ctypes_call(value fnname, value function, value callspec_,
     assert(Is_block(arg_ptr) && Tag_val(arg_ptr) == String_tag);
     val_refs[arg_idx] = String_val(arg_ptr) + Long_val(arg_offset);
 
-    ((void**)(callbuffer + arg_array_offset))[arg_idx] = &val_refs[arg_idx];
+    ((const void**)(callbuffer + arg_array_offset))[arg_idx] = &val_refs[arg_idx];
   }
 
   void (*cfunction)(void) = (void (*)(void)) CTYPES_ADDR_OF_FATPTR(function);
@@ -602,7 +602,7 @@ value ctypes_make_function_pointer(value callspec_, value fnid)
     ctypes_check_ffi_status(status);
 
     codeptr =
-      caml_alloc_custom(&closure_custom_ops, sizeof(struct closure *), 1, 1);
+      caml_alloc_custom(&closure_custom_ops, sizeof(struct closure *), 0, 1);
     *(struct closure **)Data_custom_val(codeptr) = closure;
 
     CAMLreturn (codeptr);

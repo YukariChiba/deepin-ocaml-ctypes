@@ -8,11 +8,12 @@ Build-Depends:
  libffi-dev,
  ocaml-findlib,
  ocaml-nox,
+ libbigarray-compat-ocaml-dev,
  libintegers-ocaml-dev,
- libounit-ocaml-dev,
- liblwt-ocaml-dev (>= 3.2.0),
+ libounit-ocaml-dev <!nocheck>,
+ liblwt-ocaml-dev (>= 3.2.0) <!nocheck>,
  dh-ocaml
-Standards-Version: 4.5.0
+Standards-Version: 4.6.0
 Rules-Requires-Root: no
 Vcs-Git: https://salsa.debian.org/ocaml-team/ocaml-ctypes.git
 Vcs-Browser: https://salsa.debian.org/ocaml-team/ocaml-ctypes
